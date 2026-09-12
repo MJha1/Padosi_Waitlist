@@ -219,11 +219,11 @@
 <body>
 <div class="intro" id="intro">
   <video id="introvid" playsinline muted autoplay preload="auto">
-  <source src="testfile.mp4" type="video/mp4">
+  <source src="test.mp4" type="video/mp4">
   </video>
   <div class="intro-bar">
     <button class="intro-btn intro-sound" id="playbtn" onclick="startPlay()" style="display:none">▶ Play</button>
-    <button class="intro-btn intro-sound" id="musicbtn" onclick="toggleMusic()">🎵 Tap for music</button>
+    <button class="intro-btn intro-sound" id="soundbtn" onclick="toggleSound()">🔊 Tap for sound</button>
     <button class="intro-btn intro-skip" onclick="closeIntro()">Skip intro →</button>
   </div>
   <p id="introerr" style="color:#f6c;font-size:13px;margin-top:12px;display:none">Couldn't load the video — tap Skip to continue.</p>
@@ -392,7 +392,6 @@
     const intro = document.getElementById('intro');
     intro.classList.add('hide');
     try{ introVid.pause(); }catch(e){}
-    stopMusic();
     document.body.style.overflow='';
   }
   function startPlay(){
@@ -401,41 +400,30 @@
       document.getElementById('playbtn').style.display='none';
     }).catch(()=>{});
   }
-  // ==== intro music: "Upbeat Jazz" by Francisco Alvear (Mixkit, free for commercial use) ====
-  // Browsers block audio until a user gesture, so we arm it and start on the first
-  // interaction (or the "Tap for music" button). It loops softly and stops on close.
-  let music=null, musicWanted=true, musicStarted=false;
-  function setMusicBtn(on){ const b=document.getElementById('musicbtn'); if(b) b.textContent = on ? '🔇 Music off' : '🎵 Tap for music'; }
-  function ensureMusic(){
-    if(!music){ music=new Audio('intro-music.mp3'); music.loop=true; music.preload='auto'; music.volume=0.55; }
-    return music;
+  // ==== intro sound: use the video's OWN audio (no separate music track) ====
+  // Autoplay must start muted; we unmute on the first user gesture (or the sound
+  // button) so the video's own audio plays. Browsers block audio before an interaction.
+  let soundWanted=true, soundOn=false;
+  function setSoundBtn(on){ const b=document.getElementById('soundbtn'); if(b) b.textContent = on ? '🔇 Mute' : '🔊 Tap for sound'; }
+  function enableSound(){
+    if(!soundWanted) return;
+    try{ introVid.muted=false; introVid.volume=1.0; introVid.play().catch(()=>{}); soundOn=true; setSoundBtn(true); }catch(e){}
   }
-  function startMusic(){
-    if(!musicWanted) return;
-    try{
-      const p=ensureMusic().play();
-      if(p&&p.then){ p.then(()=>{ musicStarted=true; setMusicBtn(true); }).catch(()=>{}); }
-      else { musicStarted=true; setMusicBtn(true); }
-    }catch(e){}
+  function toggleSound(){
+    if(soundOn){ introVid.muted=true; soundOn=false; soundWanted=false; setSoundBtn(false); }
+    else { soundWanted=true; enableSound(); }
   }
-  function stopMusic(){
-    try{ if(music){ music.pause(); music.currentTime=0; } }catch(e){}
-    musicStarted=false; setMusicBtn(false);
+  // Unmute on the first interaction anywhere (the sound button handles itself)
+  function firstGestureSound(e){
+    if(e && e.target && e.target.closest && e.target.closest('#soundbtn')) return;
+    enableSound();
+    window.removeEventListener('pointerdown',firstGestureSound);
+    window.removeEventListener('keydown',firstGestureSound);
+    window.removeEventListener('touchstart',firstGestureSound);
   }
-  function toggleMusic(){
-    if(musicStarted){ musicWanted=false; stopMusic(); }
-    else { musicWanted=true; startMusic(); }
-  }
-  // Start music on the first interaction anywhere (browsers require a user gesture for audio)
-  function firstGestureMusic(){
-    startMusic();
-    window.removeEventListener('pointerdown',firstGestureMusic);
-    window.removeEventListener('keydown',firstGestureMusic);
-    window.removeEventListener('touchstart',firstGestureMusic);
-  }
-  window.addEventListener('pointerdown',firstGestureMusic);
-  window.addEventListener('keydown',firstGestureMusic);
-  window.addEventListener('touchstart',firstGestureMusic);
+  window.addEventListener('pointerdown',firstGestureSound);
+  window.addEventListener('keydown',firstGestureSound);
+  window.addEventListener('touchstart',firstGestureSound);
   // try to autoplay; if the browser blocks it, show a Play button
   function tryAutoplay(){
     introVid.playbackRate = 1.3;
