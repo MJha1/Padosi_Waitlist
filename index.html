@@ -197,7 +197,7 @@
   .intro{position:fixed;inset:0;background:rgba(12,20,15,.92);z-index:100;
     display:flex;align-items:center;justify-content:center;flex-direction:column;padding:24px}
   .intro.hide{display:none}
-  .intro video{width:100%;max-width:420px;border-radius:20px;box-shadow:0 24px 60px rgba(0,0,0,.5);background:#000}
+  .intro video{width:auto;height:auto;max-width:min(900px,92vw);max-height:78vh;object-fit:contain;border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.5);background:#000}
   .intro-bar{display:flex;gap:10px;margin-top:18px}
   .intro-btn{border:0;cursor:pointer;font-family:inherit;font-size:15px;font-weight:600;
     padding:11px 20px;border-radius:11px}
@@ -223,7 +223,7 @@
   </video>
   <div class="intro-bar">
     <button class="intro-btn intro-sound" id="playbtn" onclick="startPlay()" style="display:none">▶ Play</button>
-    <button class="intro-btn intro-sound" id="soundbtn" onclick="toggleSound()">🔊 Tap for sound</button>
+    <button class="intro-btn intro-sound" id="musicbtn" onclick="toggleMusic()">🎵 Tap for music</button>
     <button class="intro-btn intro-skip" onclick="closeIntro()">Skip intro →</button>
   </div>
   <p id="introerr" style="color:#f6c;font-size:13px;margin-top:12px;display:none">Couldn't load the video — tap Skip to continue.</p>
@@ -390,6 +390,7 @@
     const intro = document.getElementById('intro');
     intro.classList.add('hide');
     try{ introVid.pause(); }catch(e){}
+    stopMusic();
     document.body.style.overflow='';
   }
   function startPlay(){
@@ -397,11 +398,74 @@
       document.getElementById('playbtn').style.display='none';
     }).catch(()=>{});
   }
-  function toggleSound(){
-    introVid.muted = !introVid.muted;
-    document.getElementById('soundbtn').textContent = introVid.muted ? '🔊 Tap for sound' : '🔇 Mute';
-    introVid.play().catch(()=>{});
+  // ==== gentle instrumental (Web Audio, generated on the fly — no file, no lyrics) ====
+  // Warm, homely pentatonic ambience for the intro. Browsers block audio until a user
+  // gesture, so we arm it and start on the first interaction (or the "Tap for music"
+  // button). It fades out and stops when the intro closes. The video stays muted.
+  let actx=null, musicMaster=null, musicStep=null, musicWanted=true, musicStarted=false;
+  const PENTA=[196.00,220.00,261.63,293.66,329.63,392.00,440.00,523.25]; // G major pentatonic, warm register
+  const MOTIF=[2,4,5,4,2,0,2,4,5,7,5,4];                                 // gentle phrase (indexes into PENTA)
+  function warmTone(freq,t,dur,vol){
+    const o=actx.createOscillator(), g=actx.createGain();
+    o.type='triangle'; o.frequency.value=freq;
+    g.gain.setValueAtTime(0.0001,t);
+    g.gain.linearRampToValueAtTime(vol,t+0.5);          // soft attack
+    g.gain.exponentialRampToValueAtTime(0.0001,t+dur);  // slow release
+    o.connect(g); g.connect(musicMaster);
+    o.start(t); o.stop(t+dur+0.05);
   }
+  function startMusic(){
+    if(!musicWanted) return;
+    try{
+      if(!actx){
+        actx=new (window.AudioContext||window.webkitAudioContext)();
+        musicMaster=actx.createGain(); musicMaster.gain.value=0.0;
+        const lp=actx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=1500;
+        const dly=actx.createDelay(1.0); dly.delayTime.value=0.34;
+        const fb=actx.createGain(); fb.gain.value=0.30;                  // soft echo for space
+        musicMaster.connect(lp); lp.connect(actx.destination);
+        lp.connect(dly); dly.connect(fb); fb.connect(dly); dly.connect(actx.destination);
+        musicMaster.gain.linearRampToValueAtTime(0.10, actx.currentTime+2.2); // gentle, low fade-in
+        let i=0;
+        musicStep=setInterval(()=>{
+          if(!actx || actx.state!=='running') return;
+          const t=actx.currentTime+0.06;
+          warmTone(PENTA[MOTIF[i%MOTIF.length]], t, 2.6, 0.9);           // melody
+          if(i%4===0) warmTone(PENTA[0]/2, t, 3.4, 0.6);                // soft low drone
+          i++;
+        }, 900);
+      }
+      if(actx.state==='suspended') actx.resume();
+      musicStarted=true;
+      const b=document.getElementById('musicbtn'); if(b) b.textContent='🔇 Music off';
+    }catch(e){}
+  }
+  function stopMusic(){
+    try{
+      if(musicStep){ clearInterval(musicStep); musicStep=null; }
+      if(actx){
+        try{ musicMaster.gain.cancelScheduledValues(actx.currentTime);
+             musicMaster.gain.linearRampToValueAtTime(0, actx.currentTime+0.4); }catch(e){}
+        const c=actx; setTimeout(()=>{ try{ c.close(); }catch(e){} }, 500);
+        actx=null; musicMaster=null; musicStarted=false;
+      }
+    }catch(e){}
+  }
+  function toggleMusic(){
+    if(musicStarted){ musicWanted=false; stopMusic();
+      const b=document.getElementById('musicbtn'); if(b) b.textContent='🎵 Tap for music'; }
+    else { musicWanted=true; startMusic(); }
+  }
+  // Start music on the first interaction anywhere (browsers require a user gesture for audio)
+  function firstGestureMusic(){
+    startMusic();
+    window.removeEventListener('pointerdown',firstGestureMusic);
+    window.removeEventListener('keydown',firstGestureMusic);
+    window.removeEventListener('touchstart',firstGestureMusic);
+  }
+  window.addEventListener('pointerdown',firstGestureMusic);
+  window.addEventListener('keydown',firstGestureMusic);
+  window.addEventListener('touchstart',firstGestureMusic);
   // try to autoplay; if the browser blocks it, show a Play button
   function tryAutoplay(){
     const p = introVid.play();
