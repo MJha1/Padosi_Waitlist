@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Padosi — join the waitlist</title>
+<meta name="description" content="Padosi brings your gated community's home kitchens onto one WhatsApp link. Cooks sell what they make; neighbours order and pay by UPI. Join the waitlist — we open tower by tower.">
+
+<!-- ===== Social share / LinkedIn preview =====
+     IMPORTANT: replace https://YOUR-DOMAIN below with your real deployed URL
+     (e.g. https://padosi-waitlist.vercel.app) so the link preview & image work. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Padosi">
+<meta property="og:title" content="Padosi — your community's home kitchens, on one link">
+<meta property="og:description" content="Cooks sell what they make; neighbours order and pay by UPI — right inside your community's WhatsApp group. We open tower by tower. Join the waitlist.">
+<meta property="og:url" content="https://YOUR-DOMAIN/">
+<meta property="og:image" content="https://YOUR-DOMAIN/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Padosi — home-cook ordering for your gated community. Join the waitlist.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Padosi — your community's home kitchens, on one link">
+<meta name="twitter:description" content="Cooks sell what they make; neighbours order and pay by UPI, inside your community's WhatsApp group. Join the waitlist.">
+<meta name="twitter:image" content="https://YOUR-DOMAIN/og-image.png">
+<meta name="theme-color" content="#1f5a3d">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;450;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1c241f;
+    --ink-soft:#4a554d;
+    --paper:#f3f0e7;
+    --paper-2:#eae6da;
+    --card:#ffffff;
+    --green:#1f5a3d;
+    --green-deep:#173f2c;
+    --amber:#e08a2b;
+    --amber-soft:#f6e3c8;
+    --line:#dcd7c7;
+    --wa:#25a35a;
+    --radius:18px;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;
+    font-size:17px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+
+  /* header */
+  header{padding:26px 0 8px}
+  .brandrow{display:flex;align-items:center;gap:12px}
+  .logo{
+    width:46px;height:46px;border-radius:13px;
+    background:linear-gradient(150deg,var(--amber),#c9701c);
+    display:flex;align-items:center;justify-content:center;font-size:24px;
+    box-shadow:0 6px 18px rgba(200,112,28,.28);
+  }
+  .brandtext{display:flex;flex-direction:column;line-height:1.15}
+  .brandtext b{font-family:'Fraunces',serif;font-weight:600;font-size:22px;letter-spacing:-.01em}
+  .brandtext span{font-size:13.5px;color:var(--ink-soft)}
+  .badge{
+    margin-left:6px;font-size:11px;font-weight:600;color:var(--amber);
+    background:var(--amber-soft);padding:3px 8px;border-radius:20px;letter-spacing:.02em;
+    align-self:center;
+  }
+
+  /* hero */
+  .hero{padding:40px 0 8px;display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center}
+  h1{
+    font-family:'Fraunces',serif;font-weight:600;
+    font-size:clamp(34px,5.2vw,58px);line-height:1.02;letter-spacing:-.02em;
+    margin:0 0 18px;
+  }
+  h1 .thin{color:var(--green)}
+  .lede{font-size:19px;color:var(--ink-soft);max-width:34ch;margin:0 0 26px}
+  .cta-row{display:flex;gap:12px;flex-wrap:wrap}
+  .btn{
+    border:0;cursor:pointer;font-family:inherit;font-size:16px;font-weight:600;
+    padding:14px 22px;border-radius:13px;text-decoration:none;display:inline-flex;
+    align-items:center;gap:9px;transition:transform .12s ease,box-shadow .12s ease;
+  }
+  .btn:active{transform:translateY(1px)}
+  .btn-green{background:var(--green);color:#fff;box-shadow:0 8px 20px rgba(31,90,61,.28)}
+  .btn-green:hover{box-shadow:0 10px 26px rgba(31,90,61,.34)}
+  .btn-ghost{background:transparent;color:var(--green);border:1.5px solid var(--line)}
+  .btn-ghost:hover{border-color:var(--green)}
+
+  /* phone mock */
+  .phone{
+    justify-self:center;width:280px;background:#0f1512;border-radius:38px;padding:12px;
+    box-shadow:0 30px 60px rgba(20,35,25,.28);position:relative;
+  }
+  .notch{width:110px;height:22px;background:#0f1512;border-radius:0 0 16px 16px;
+    position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:2}
+  .screen{border-radius:28px;overflow:hidden;background:#e9e5db}
+  .scr-top{background:var(--green);color:#fff;padding:34px 16px 14px}
+  .scr-top small{opacity:.8;font-size:12px}
+  .scr-top div{font-weight:600;font-size:15px;margin-top:2px}
+  .bubble{background:#fff;margin:12px;padding:12px 14px;border-radius:14px;font-size:13.5px;
+    box-shadow:0 2px 6px rgba(0,0,0,.05)}
+  .bubble .who{color:var(--amber);font-weight:600;font-size:12px;margin-bottom:3px}
+  .menu-live{background:var(--green-deep);color:#fff;margin:12px;padding:14px;border-radius:14px}
+  .menu-live small{opacity:.75;font-size:11px;letter-spacing:.03em}
+  .menu-live b{display:block;font-family:'Fraunces',serif;font-size:19px;margin-top:3px}
+  .sent{background:#d8efdf;margin:12px 12px 16px auto;width:78%;padding:10px 13px;border-radius:14px;
+    font-size:13px;text-align:right}
+
+  /* choose section */
+  .choose{padding:64px 0 20px}
+  .choose h2{font-family:'Fraunces',serif;font-weight:600;font-size:30px;margin:0 0 6px;letter-spacing:-.01em}
+  .choose p.sub{color:var(--ink-soft);margin:0 0 30px;max-width:46ch}
+  .picks{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .pick{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:26px;cursor:pointer;transition:border-color .15s ease,box-shadow .15s ease,transform .15s ease;
+    text-align:left;font-family:inherit;color:inherit;
+  }
+  .pick:hover{border-color:var(--green);box-shadow:0 12px 30px rgba(20,45,30,.10);transform:translateY(-2px)}
+  .pick .k{font-size:26px;margin-bottom:12px}
+  .pick h3{font-family:'Fraunces',serif;font-weight:600;font-size:22px;margin:0 0 6px}
+  .pick p{color:var(--ink-soft);font-size:15.5px;margin:0 0 14px}
+  .pick .go{color:var(--green);font-weight:600;font-size:15px}
+  .pick.cook{background:linear-gradient(165deg,#fbf9f2,#fff)}
+  .tag{display:inline-block;background:var(--amber-soft);color:#b5701a;font-size:12px;
+    font-weight:600;padding:3px 9px;border-radius:20px;margin-bottom:12px}
+
+  /* how */
+  .how{padding:40px 0 10px}
+  .how h2{font-family:'Fraunces',serif;font-weight:600;font-size:26px;margin:0 0 22px}
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .step{background:var(--paper-2);border-radius:14px;padding:20px}
+  .step .n{width:30px;height:30px;border-radius:50%;background:var(--green);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-weight:600;font-size:15px;margin-bottom:12px}
+  .step h4{margin:0 0 5px;font-size:16px;font-weight:600}
+  .step p{margin:0;color:var(--ink-soft);font-size:14.5px}
+
+  /* form modal */
+  .overlay{position:fixed;inset:0;background:rgba(18,28,22,.5);backdrop-filter:blur(3px);
+    display:none;align-items:flex-end;justify-content:center;z-index:50;padding:0}
+  .overlay.open{display:flex}
+  @media(min-width:640px){.overlay{align-items:center;padding:24px}}
+  .sheet{
+    background:var(--paper);width:100%;max-width:560px;border-radius:24px 24px 0 0;
+    max-height:92vh;overflow-y:auto;padding:26px 24px 34px;
+    animation:rise .28s cubic-bezier(.2,.8,.2,1);
+  }
+  @media(min-width:640px){.sheet{border-radius:22px}}
+  @keyframes rise{from{transform:translateY(24px);opacity:.6}to{transform:translateY(0);opacity:1}}
+  @media(prefers-reduced-motion:reduce){.sheet{animation:none}}
+  .sheet-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px}
+  .sheet-head h3{font-family:'Fraunces',serif;font-weight:600;font-size:24px;margin:0}
+  .sheet-head p{color:var(--ink-soft);font-size:14.5px;margin:4px 0 0}
+  .x{background:none;border:0;font-size:26px;line-height:1;cursor:pointer;color:var(--ink-soft);padding:0 4px}
+  form{margin-top:18px;display:flex;flex-direction:column;gap:14px}
+  label{font-size:14px;font-weight:500;display:block;margin-bottom:5px}
+  .req{color:var(--amber)}
+  input,select,textarea{
+    width:100%;font-family:inherit;font-size:16px;padding:12px 13px;border:1.5px solid var(--line);
+    border-radius:11px;background:#fff;color:var(--ink);
+  }
+  input:focus,select:focus,textarea:focus{outline:2px solid var(--green);outline-offset:1px;border-color:var(--green)}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{border:1.5px solid var(--line);background:#fff;border-radius:20px;padding:7px 14px;font-size:14px;
+    cursor:pointer;user-select:none;font-family:inherit;color:var(--ink)}
+  .chip.on{background:var(--green);color:#fff;border-color:var(--green)}
+  .submit{background:var(--green);color:#fff;border:0;padding:15px;border-radius:12px;font-size:16px;
+    font-weight:600;cursor:pointer;font-family:inherit;margin-top:4px}
+  .submit:hover{background:var(--green-deep)}
+  .hint{font-size:13px;color:var(--ink-soft);margin-top:-6px}
+  .cookonly{display:none}
+
+  /* success */
+  .done{display:none;text-align:center;padding:26px 8px}
+  .done .k{font-size:44px;margin-bottom:10px}
+  .done h3{font-family:'Fraunces',serif;font-weight:600;font-size:26px;margin:0 0 8px}
+  .done p{color:var(--ink-soft);max-width:38ch;margin:0 auto 22px}
+  .wa-btn{background:var(--wa);color:#fff;text-decoration:none;font-weight:600;
+    padding:13px 22px;border-radius:12px;display:inline-flex;gap:9px;align-items:center}
+  .done .wa-btn{display:flex;width:max-content;max-width:100%;margin:8px auto;justify-content:center}
+  .done .group-btn{background:var(--green)}
+  .donesteps{font-weight:600;color:var(--ink);margin:2px 0 12px}
+
+  footer{padding:50px 0 40px;color:var(--ink-soft);font-size:13.5px;text-align:center}
+
+  /* intro video overlay */
+  .intro{position:fixed;inset:0;background:rgba(12,20,15,.92);z-index:100;
+    display:flex;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+  .intro.hide{display:none}
+  .intro video{width:100%;max-width:420px;border-radius:20px;box-shadow:0 24px 60px rgba(0,0,0,.5);background:#000}
+  .intro-bar{display:flex;gap:10px;margin-top:18px}
+  .intro-btn{border:0;cursor:pointer;font-family:inherit;font-size:15px;font-weight:600;
+    padding:11px 20px;border-radius:11px}
+  .intro-skip{background:rgba(255,255,255,.14);color:#fff}
+  .intro-skip:hover{background:rgba(255,255,255,.24)}
+  .intro-sound{background:var(--amber);color:#3a2408}
+  .disclaimer{background:var(--amber-soft);color:#8a5a12;font-size:12.5px;text-align:center;
+    padding:7px;border-radius:0}
+
+  @media(max-width:760px){
+    .hero{grid-template-columns:1fr;gap:30px}
+    .phone{order:-1}
+    .picks{grid-template-columns:1fr}
+    .steps{grid-template-columns:1fr}
+    .two{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div class="intro" id="intro">
+  <video id="introvid" playsinline muted autoplay preload="auto">
+  <source src="testfile.mp4" type="video/mp4">
+  </video>
+  <div class="intro-bar">
+    <button class="intro-btn intro-sound" id="playbtn" onclick="startPlay()" style="display:none">▶ Play</button>
+    <button class="intro-btn intro-sound" id="soundbtn" onclick="toggleSound()">🔊 Tap for sound</button>
+    <button class="intro-btn intro-skip" onclick="closeIntro()">Skip intro →</button>
+  </div>
+  <p id="introerr" style="color:#f6c;font-size:13px;margin-top:12px;display:none">Couldn't load the video — tap Skip to continue.</p>
+</div>
+
+<div class="disclaimer">Prototype — home cooks are independent; Padosi connects them with their own gated community.</div>
+
+<header>
+  <div class="wrap brandrow">
+    <div class="logo">🍲</div>
+    <div class="brandtext"><b>Padosi</b><span>Home-cook ordering for your gated community</span></div>
+    <span class="badge">WAITLIST</span>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <div>
+      <h1>Bring your tower's<br><span class="thin">home kitchens</span><br>onto one link.</h1>
+      <p class="lede">Padosi lives inside your community's WhatsApp group. Cooks sell what they make; neighbours order and pay by UPI. We open tower by tower.</p>
+      <div class="cta-row">
+        <button class="btn btn-green" onclick="openForm('cook')">👩‍🍳 Cook with Padosi</button>
+        <button class="btn btn-ghost" onclick="openForm('community')">Bring it to my community</button>
+      </div>
+    </div>
+
+    <div class="phone" aria-hidden="true">
+      <div class="notch"></div>
+      <div class="screen">
+        <div class="scr-top"><small>Prestige Lakeside · Tower B</small><div>312 members · Foodies group</div></div>
+        <div class="bubble"><div class="who">Anitha · B-306</div>Anyone tried Farida's mawa cake this week? 😋</div>
+        <div class="menu-live"><small>PADOSI · TOWER B KITCHENS</small><b>Today's menu is live</b></div>
+        <div class="sent">Perfect, ordering lunch now 🍱</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="choose">
+    <h2>Which side are you on?</h2>
+    <p class="sub">Cooks are how a tower goes live. Once a few kitchens sign up in your building, everyone in the group can order.</p>
+    <div class="picks">
+      <button class="pick cook" onclick="openForm('cook')">
+        <span class="tag">Kitchens first</span>
+        <div class="k">👩‍🍳</div>
+        <h3>I cook and want to sell</h3>
+        <p>Orders arrive already paid, straight to your UPI. Flip dishes on and off in one tap. No chasing money in DMs.</p>
+        <span class="go">Join as a cook →</span>
+      </button>
+      <button class="pick" onclick="openForm('community')">
+        <div class="k">🏢</div>
+        <h3>I want it in my community</h3>
+        <p>Tell us your tower. We'll let you know the moment enough kitchens sign up and your building goes live.</p>
+        <span class="go">Add my tower →</span>
+      </button>
+    </div>
+  </section>
+
+  <section class="how">
+    <h2>How a tower goes live</h2>
+    <div class="steps">
+      <div class="step"><div class="n">1</div><h4>Cooks sign up</h4><p>Home cooks in a building join and list what they make.</p></div>
+      <div class="step"><div class="n">2</div><h4>We open the tower</h4><p>Once a few kitchens are in, one common link drops in your WhatsApp group.</p></div>
+      <div class="step"><div class="n">3</div><h4>Neighbours order</h4><p>Tap the link, see today's menu, pay by UPI. No app to install.</p></div>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap">Padosi · made for gated communities in India</footer>
+
+<!-- Modal -->
+<div class="overlay" id="overlay" onclick="if(event.target===this)closeForm()">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+    <div id="formview">
+      <div class="sheet-head">
+        <div>
+          <h3 id="sheet-title">Join as a cook</h3>
+          <p id="sheet-sub">A few details so we can open your tower first.</p>
+        </div>
+        <button class="x" onclick="closeForm()" aria-label="Close">×</button>
+      </div>
+
+      <form id="waitform" onsubmit="return submitForm(event)">
+        <div class="two">
+          <div><label>Your name <span class="req">*</span></label><input required name="name" autocomplete="name"></div>
+          <div><label>WhatsApp number <span class="req">*</span></label><input required name="phone" type="tel" inputmode="tel" placeholder="+91 " autocomplete="tel"></div>
+        </div>
+
+        <div class="two">
+          <div><label>Community / society <span class="req">*</span></label><input required name="community" placeholder="e.g. Prestige Lakeside"></div>
+          <div><label>Tower / block <span class="req">*</span></label><input required name="tower" placeholder="e.g. Tower B"></div>
+        </div>
+
+        <div class="two">
+          <div><label>City <span class="req">*</span></label><input required name="city"></div>
+          <div><label>Flat number</label><input name="flat" placeholder="optional"></div>
+        </div>
+
+        <!-- COOK ONLY -->
+        <div class="cookonly">
+          <div>
+            <label>What do you cook?</label>
+            <input name="dishes" placeholder="e.g. South Indian breakfast, bakes, thali">
+          </div>
+        </div>
+        <div class="cookonly">
+          <label>Meals you can serve</label>
+          <div class="chips" data-group="meals">
+            <div class="chip" data-v="Breakfast">Breakfast</div>
+            <div class="chip" data-v="Lunch">Lunch</div>
+            <div class="chip" data-v="Dinner">Dinner</div>
+            <div class="chip" data-v="Snacks">Snacks</div>
+          </div>
+        </div>
+        <div class="cookonly two">
+          <div>
+            <label>Food type</label>
+            <select name="foodtype">
+              <option>Veg</option><option>Non-veg</option><option>Both</option>
+            </select>
+          </div>
+          <div>
+            <label>Already selling to neighbours?</label>
+            <select name="already"><option>Not yet</option><option>Yes, informally</option></select>
+          </div>
+        </div>
+        <div class="cookonly">
+          <label>UPI ID <span class="req">*</span></label>
+          <input name="upi" placeholder="name@bank — so payments are ready on day one">
+          <p class="hint">We never see your money. Orders settle straight to your UPI.</p>
+        </div>
+
+        <!-- COMMUNITY ONLY -->
+        <div class="commonly">
+          <label>Your role</label>
+          <div class="chips" data-group="role" data-single="1">
+            <div class="chip on" data-v="Resident">Resident</div>
+            <div class="chip" data-v="RWA / admin">RWA / admin</div>
+            <div class="chip" data-v="I know a cook">I know a cook</div>
+          </div>
+        </div>
+
+        <button class="submit" type="submit" id="submitbtn">Join the waitlist</button>
+        <p class="hint">By joining you agree we can message you on WhatsApp about Padosi in your tower.</p>
+      </form>
+    </div>
+
+    <!-- SUCCESS -->
+    <div class="done" id="doneview">
+      <div class="k">🎉</div>
+      <h3 id="done-title">You're on the list</h3>
+      <p id="done-msg"></p>
+      <p class="donesteps">Two quick steps to lock your spot 👇</p>
+      <a class="wa-btn" id="wa-link" href="#" target="_blank" rel="noopener">💬 1 · Send your details on WhatsApp</a>
+      <a class="wa-btn group-btn" id="group-link" href="#" target="_blank" rel="noopener">👥 2 · Join your Padosi group →</a>
+      <p class="hint" style="margin-top:14px">We approve genuine members from the waitlist, so the group stays real neighbours only.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ==== intro video ====
+  const introVid = document.getElementById('introvid');
+  function closeIntro(){
+    const intro = document.getElementById('intro');
+    intro.classList.add('hide');
+    try{ introVid.pause(); }catch(e){}
+    document.body.style.overflow='';
+  }
+  function startPlay(){
+    introVid.play().then(()=>{
+      document.getElementById('playbtn').style.display='none';
+    }).catch(()=>{});
+  }
+  function toggleSound(){
+    introVid.muted = !introVid.muted;
+    document.getElementById('soundbtn').textContent = introVid.muted ? '🔊 Tap for sound' : '🔇 Mute';
+    introVid.play().catch(()=>{});
+  }
+  // try to autoplay; if the browser blocks it, show a Play button
+  function tryAutoplay(){
+    const p = introVid.play();
+    if(p && p.catch){
+      p.catch(()=>{ document.getElementById('playbtn').style.display=''; });
+    }
+  }
+  introVid.addEventListener('loadeddata', tryAutoplay);
+  introVid.addEventListener('canplay', tryAutoplay);
+  introVid.addEventListener('ended', closeIntro);
+  introVid.addEventListener('error', ()=>{
+    document.getElementById('introerr').style.display='';
+    document.getElementById('playbtn').style.display='none';
+  });
+  // kick it off immediately too
+  tryAutoplay();
+  // lock scroll while intro is up
+  document.body.style.overflow='hidden';
+
+  // ==== CONFIG: set your WhatsApp Business number (with country code, no +) ====
+  const WA_NUMBER = "15556695931"; // +1 (555) 669-5931 — Padosi test business number
+
+  // ==== WhatsApp GROUP invite links (chat.whatsapp.com/...) ====
+  // Paste your real group invite link(s) below. Use two groups to keep cooks and
+  // residents separate, or set both to the same link for one shared group.
+  // IMPORTANT: in each group → Group settings → "Approve new members" = ON, so
+  // only genuine waitlist users an admin approves actually get in.
+  const GROUP_LINK_COOK      = "https://chat.whatsapp.com/CGyiA9VJf2Z7IXkiJ0GDWg";
+  const GROUP_LINK_COMMUNITY = "https://chat.whatsapp.com/CGyiA9VJf2Z7IXkiJ0GDWg";
+
+  let mode = 'cook';
+
+  function openForm(which){
+    mode = which;
+    const title = document.getElementById('sheet-title');
+    const sub = document.getElementById('sheet-sub');
+    const submit = document.getElementById('submitbtn');
+    document.querySelectorAll('.cookonly').forEach(e=>e.style.display = which==='cook' ? '' : 'none');
+    document.querySelectorAll('.commonly').forEach(e=>e.style.display = which==='community' ? '' : 'none');
+    // toggle required on cook-only UPI
+    const upi = document.querySelector('[name=upi]');
+    upi.required = (which==='cook');
+
+    if(which==='cook'){
+      title.textContent = 'Join as a cook';
+      sub.textContent = 'A few details so we can open your tower first.';
+      submit.textContent = 'Join the cook waitlist';
+    }else{
+      title.textContent = 'Bring Padosi to your community';
+      sub.textContent = "Tell us your tower — we'll notify you when it goes live.";
+      submit.textContent = 'Add my tower';
+    }
+    document.getElementById('formview').style.display='block';
+    document.getElementById('doneview').style.display='none';
+    document.getElementById('overlay').classList.add('open');
+    document.body.style.overflow='hidden';
+  }
+  function closeForm(){
+    document.getElementById('overlay').classList.remove('open');
+    document.body.style.overflow='';
+    document.getElementById('waitform').reset();
+    document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));
+    document.querySelector('[data-group=role] .chip')?.classList.add('on');
+  }
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeForm()});
+
+  // chip toggles
+  document.querySelectorAll('.chips').forEach(group=>{
+    const single = group.dataset.single;
+    group.querySelectorAll('.chip').forEach(chip=>{
+      chip.addEventListener('click',()=>{
+        if(single){group.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));chip.classList.add('on');}
+        else chip.classList.toggle('on');
+      });
+    });
+  });
+
+  function collectChips(group){
+    return [...document.querySelectorAll(`[data-group=${group}] .chip.on`)].map(c=>c.dataset.v).join(', ');
+  }
+
+  function submitForm(e){
+    e.preventDefault();
+    const f = e.target;
+    const data = {
+      side: mode,
+      name: f.name.value.trim(),
+      phone: f.phone.value.trim(),
+      community: f.community.value.trim(),
+      tower: f.tower.value.trim(),
+      city: f.city.value.trim(),
+      flat: f.flat.value.trim(),
+    };
+    if(mode==='cook'){
+      data.dishes = f.dishes.value.trim();
+      data.meals = collectChips('meals');
+      data.foodtype = f.foodtype.value;
+      data.already = f.already.value;
+      data.upi = f.upi.value.trim();
+    }else{
+      data.role = collectChips('role');
+    }
+
+    // === Persist the signup ===
+    // Right now this saves to localStorage as a placeholder. Replace with a POST
+    // to your backend / Airtable / Google Sheet. See the note under the code.
+    try{
+      const key = 'padosi_waitlist';
+      const list = JSON.parse(localStorage.getItem(key) || '[]');
+      list.push({...data, ts:new Date().toISOString()});
+      localStorage.setItem(key, JSON.stringify(list));
+    }catch(err){ console.warn('storage failed', err); }
+
+    console.log('Waitlist signup:', data);
+
+    // Build a WhatsApp deep link prefilled with the FULL lead. This message,
+    // sent to the business number, IS the captured lead — the sender's WhatsApp
+    // number comes through automatically. Read leads in the Business inbox.
+    const msg = mode==='cook'
+      ? `Hi Padosi! I want to cook 👩‍🍳\nName: ${data.name}\nPhone: ${data.phone}\nCommunity: ${data.community} ${data.tower}, ${data.city}${data.flat?(' ('+data.flat+')'):''}\nI make: ${data.dishes||'—'}\nMeals: ${data.meals||'TBD'} · ${data.foodtype}\nAlready selling: ${data.already}\nUPI: ${data.upi||'—'}`
+      : `Hi Padosi! Please bring Padosi to my community 🏢\nName: ${data.name}\nPhone: ${data.phone}\nCommunity: ${data.community} ${data.tower}, ${data.city}${data.flat?(' ('+data.flat+')'):''}\nRole: ${data.role||'Resident'}`;
+    const waUrl = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
+    document.getElementById('wa-link').href = waUrl;
+
+    // Group invite link — revealed only here, after signup. Cook vs community group.
+    document.getElementById('group-link').href = mode==='cook' ? GROUP_LINK_COOK : GROUP_LINK_COMMUNITY;
+
+    // Success view
+    document.getElementById('done-title').textContent =
+      mode==='cook' ? "You're on the cook waitlist" : "Your tower is on the list";
+    document.getElementById('done-msg').textContent =
+      mode==='cook'
+        ? `Thanks ${data.name}! Send your details on WhatsApp so we save your kitchen, then join the group to get going in ${data.tower}.`
+        : `Thanks ${data.name}! Send your details on WhatsApp so we save your spot, then join the group — we'll open ${data.tower} as kitchens sign up.`;
+
+    document.getElementById('formview').style.display='none';
+    document.getElementById('doneview').style.display='block';
+    return false;
+  }
+</script>
+</body>
+</html>
