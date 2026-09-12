@@ -401,84 +401,29 @@
       document.getElementById('playbtn').style.display='none';
     }).catch(()=>{});
   }
-  // ==== gentle instrumental (Web Audio, generated on the fly — no file, no lyrics) ====
-  // Warm, homely pentatonic ambience for the intro. Browsers block audio until a user
-  // gesture, so we arm it and start on the first interaction (or the "Tap for music"
-  // button). It fades out and stops when the intro closes. The video stays muted.
-  let actx=null, musicMaster=null, musicStep=null, musicWanted=true, musicStarted=false;
-  const PENTA=[196.00,220.00,261.63,293.66,329.63,392.00,440.00,523.25]; // G major pentatonic, warm register
-  const ARP=[0,2,4,7,4,5,4,2];                                          // driving arpeggio (indexes into PENTA)
-  function warmTone(freq,t,dur,vol){
-    const o=actx.createOscillator(), g=actx.createGain();
-    o.type='triangle'; o.frequency.value=freq;
-    g.gain.setValueAtTime(0.0001,t);
-    g.gain.linearRampToValueAtTime(vol,t+0.5);          // soft attack
-    g.gain.exponentialRampToValueAtTime(0.0001,t+dur);  // slow release
-    o.connect(g); g.connect(musicMaster);
-    o.start(t); o.stop(t+dur+0.05);
-  }
-  function pluck(freq,t,vol){                             // short, percussive — the "motion" of a workflow
-    const o=actx.createOscillator(), g=actx.createGain();
-    o.type='triangle'; o.frequency.value=freq;
-    g.gain.setValueAtTime(0.0001,t);
-    g.gain.linearRampToValueAtTime(vol,t+0.02);
-    g.gain.exponentialRampToValueAtTime(0.0001,t+0.38);
-    o.connect(g); g.connect(musicMaster);
-    o.start(t); o.stop(t+0.42);
-  }
-  function sweep(t){                                      // rising whoosh — a section/transition marker
-    const o=actx.createOscillator(), g=actx.createGain(), bp=actx.createBiquadFilter();
-    o.type='sawtooth'; bp.type='bandpass'; bp.frequency.value=1200; bp.Q.value=6;
-    o.frequency.setValueAtTime(220,t); o.frequency.exponentialRampToValueAtTime(1760,t+0.5);
-    g.gain.setValueAtTime(0.0001,t);
-    g.gain.linearRampToValueAtTime(0.09,t+0.1);
-    g.gain.exponentialRampToValueAtTime(0.0001,t+0.6);
-    o.connect(bp); bp.connect(g); g.connect(musicMaster);
-    o.start(t); o.stop(t+0.65);
+  // ==== intro music: "Upbeat Jazz" by Francisco Alvear (Mixkit, free for commercial use) ====
+  // Browsers block audio until a user gesture, so we arm it and start on the first
+  // interaction (or the "Tap for music" button). It loops softly and stops on close.
+  let music=null, musicWanted=true, musicStarted=false;
+  function setMusicBtn(on){ const b=document.getElementById('musicbtn'); if(b) b.textContent = on ? '🔇 Music off' : '🎵 Tap for music'; }
+  function ensureMusic(){
+    if(!music){ music=new Audio('intro-music.mp3'); music.loop=true; music.preload='auto'; music.volume=0.55; }
+    return music;
   }
   function startMusic(){
     if(!musicWanted) return;
     try{
-      if(!actx){
-        actx=new (window.AudioContext||window.webkitAudioContext)();
-        musicMaster=actx.createGain(); musicMaster.gain.value=0.0;
-        const lp=actx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=2200;
-        const dly=actx.createDelay(1.0); dly.delayTime.value=0.34;
-        const fb=actx.createGain(); fb.gain.value=0.30;                  // soft echo for space
-        musicMaster.connect(lp); lp.connect(actx.destination);
-        lp.connect(dly); dly.connect(fb); fb.connect(dly); dly.connect(actx.destination);
-        musicMaster.gain.linearRampToValueAtTime(0.12, actx.currentTime+1.6); // quicker fade-in
-        let i=0;
-        musicStep=setInterval(()=>{
-          if(!actx || actx.state!=='running') return;
-          const t=actx.currentTime+0.05;
-          pluck(PENTA[ARP[i%ARP.length]], t, 0.55);                    // fast arpeggio = workflow motion
-          if(i%2===0) pluck(PENTA[0]/2, t, 0.5);                       // bass pulse on the beat
-          if(i%8===0){ warmTone(PENTA[2], t, 2.0, 0.26); warmTone(PENTA[5], t, 2.0, 0.20); } // airy pad chord per bar
-          if(i%16===8) pluck(PENTA[7]*2, t, 0.18);                     // high accent
-          if(i%32===31) sweep(t);                                      // transition whoosh
-          i++;
-        }, 300);
-      }
-      if(actx.state==='suspended') actx.resume();
-      musicStarted=true;
-      const b=document.getElementById('musicbtn'); if(b) b.textContent='🔇 Music off';
+      const p=ensureMusic().play();
+      if(p&&p.then){ p.then(()=>{ musicStarted=true; setMusicBtn(true); }).catch(()=>{}); }
+      else { musicStarted=true; setMusicBtn(true); }
     }catch(e){}
   }
   function stopMusic(){
-    try{
-      if(musicStep){ clearInterval(musicStep); musicStep=null; }
-      if(actx){
-        try{ musicMaster.gain.cancelScheduledValues(actx.currentTime);
-             musicMaster.gain.linearRampToValueAtTime(0, actx.currentTime+0.4); }catch(e){}
-        const c=actx; setTimeout(()=>{ try{ c.close(); }catch(e){} }, 500);
-        actx=null; musicMaster=null; musicStarted=false;
-      }
-    }catch(e){}
+    try{ if(music){ music.pause(); music.currentTime=0; } }catch(e){}
+    musicStarted=false; setMusicBtn(false);
   }
   function toggleMusic(){
-    if(musicStarted){ musicWanted=false; stopMusic();
-      const b=document.getElementById('musicbtn'); if(b) b.textContent='🎵 Tap for music'; }
+    if(musicStarted){ musicWanted=false; stopMusic(); }
     else { musicWanted=true; startMusic(); }
   }
   // Start music on the first interaction anywhere (browsers require a user gesture for audio)
