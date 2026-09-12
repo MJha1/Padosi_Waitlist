@@ -386,6 +386,8 @@
 <script>
   // ==== intro video ====
   const introVid = document.getElementById('introvid');
+  introVid.defaultPlaybackRate = 1.25;   // persists across (re)loads
+  introVid.playbackRate = 1.25;          // play the intro a touch faster
   function closeIntro(){
     const intro = document.getElementById('intro');
     intro.classList.add('hide');
@@ -394,6 +396,7 @@
     document.body.style.overflow='';
   }
   function startPlay(){
+    introVid.playbackRate = 1.25;
     introVid.play().then(()=>{
       document.getElementById('playbtn').style.display='none';
     }).catch(()=>{});
@@ -404,7 +407,7 @@
   // button). It fades out and stops when the intro closes. The video stays muted.
   let actx=null, musicMaster=null, musicStep=null, musicWanted=true, musicStarted=false;
   const PENTA=[196.00,220.00,261.63,293.66,329.63,392.00,440.00,523.25]; // G major pentatonic, warm register
-  const MOTIF=[2,4,5,4,2,0,2,4,5,7,5,4];                                 // gentle phrase (indexes into PENTA)
+  const MOTIF=[2,4,5,7,5,4,2,4,5,7,6,5,4,2,0,2];                         // flowing phrase (indexes into PENTA)
   function warmTone(freq,t,dur,vol){
     const o=actx.createOscillator(), g=actx.createGain();
     o.type='triangle'; o.frequency.value=freq;
@@ -430,10 +433,11 @@
         musicStep=setInterval(()=>{
           if(!actx || actx.state!=='running') return;
           const t=actx.currentTime+0.06;
-          warmTone(PENTA[MOTIF[i%MOTIF.length]], t, 2.6, 0.9);           // melody
-          if(i%4===0) warmTone(PENTA[0]/2, t, 3.4, 0.6);                // soft low drone
+          warmTone(PENTA[MOTIF[i%MOTIF.length]], t, 1.9, 0.8);          // melody (quicker, flowing)
+          if(i%8===0) warmTone(PENTA[0]/2, t, 3.2, 0.55);              // soft low drone
+          if(i%4===2) warmTone(PENTA[MOTIF[(i+2)%MOTIF.length]]*2, t+0.08, 1.1, 0.16); // gentle shimmer, octave up
           i++;
-        }, 900);
+        }, 600);
       }
       if(actx.state==='suspended') actx.resume();
       musicStarted=true;
@@ -468,6 +472,7 @@
   window.addEventListener('touchstart',firstGestureMusic);
   // try to autoplay; if the browser blocks it, show a Play button
   function tryAutoplay(){
+    introVid.playbackRate = 1.25;
     const p = introVid.play();
     if(p && p.catch){
       p.catch(()=>{ document.getElementById('playbtn').style.display=''; });
