@@ -263,6 +263,12 @@
     background:linear-gradient(130deg,rgba(255,255,255,.18),transparent 44%)}
   @media(prefers-reduced-motion:reduce){.appfloat{animation:none}}
 
+  /* ---------- cinematic film band ---------- */
+  .filmframe{position:relative;border-radius:24px;overflow:hidden;aspect-ratio:16/9;background:#100e0c;
+    box-shadow:0 34px 80px rgba(29,23,18,.34)}
+  .filmframe video{width:100%;height:100%;object-fit:cover;display:block}
+  .filmframe::after{content:"";position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}
+
   /* ---------- reveal on scroll ---------- */
   .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
   .reveal.in{opacity:1;transform:none}
@@ -338,6 +344,19 @@
       <div class="persona"><span class="av">🧑‍💻</span><span class="qt"><b>Anitha · resident</b>Is my tower live yet? I'm done with cloud kitchens.</span></div>
       <div class="persona"><span class="av">🛵</span><span class="qt"><b>Ravi · delivery</b>Just two floors down — hot in five minutes.</span></div>
       <div class="persona"><span class="av">🏢</span><span class="qt"><b>RWA · Prestige Lakeside</b>Can we get this for all six towers?</span></div>
+    </div>
+  </section>
+
+  <!-- CINEMATIC FILM -->
+  <section class="wrap band" id="film">
+    <div class="sec-head reveal">
+      <span class="eyebrow">The people behind the food</span>
+      <h2>Every plate has a neighbour behind it.</h2>
+    </div>
+    <div class="filmframe reveal">
+      <video class="film" autoplay muted loop playsinline preload="metadata" poster="cooking-poster.jpg">
+        <source src="cooking.mp4" type="video/mp4">
+      </video>
     </div>
   </section>
 
@@ -703,6 +722,14 @@
       els.forEach(el=>io.observe(el));
     } else {
       els.forEach(el=>el.classList.add('in'));
+    }
+    // play the cinematic film only while it's on screen
+    const film=document.querySelector('.film');
+    if(film && 'IntersectionObserver' in window){
+      const fio=new IntersectionObserver((ents)=>{
+        ents.forEach(en=>{ if(en.isIntersecting){ film.play().catch(()=>{}); } else { film.pause(); } });
+      },{threshold:.25});
+      fio.observe(film);
     }
     // 3D phone: tilt toward the cursor
     const stage=document.querySelector('.appstage'), phone=document.querySelector('.appphone');
