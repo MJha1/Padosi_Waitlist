@@ -279,7 +279,7 @@
     <div class="brandtext"><b>Padosi</b><span>Home-cook ordering for your society</span></div>
     <div class="navspace"></div>
     <a class="navlink hidemob" href="#how">How it works</a>
-    <a class="navcta" href="#join">Join the waitlist</a>
+    <a class="navcta" href="https://chat.whatsapp.com/CGyiA9VJf2Z7IXkiJ0GDWg" target="_blank" rel="noopener">Join the waitlist</a>
   </div>
 </nav>
 
@@ -489,7 +489,13 @@
   function closeIntro(){
     const intro = document.getElementById('intro');
     intro.classList.add('hide');
-    try{ introVid.pause(); }catch(e){}
+    try{ introVid.pause(); introVid.muted=true; }catch(e){}
+    // Once the intro is gone, never let a later click (e.g. "Join the waitlist")
+    // re-play the hidden video's audio: disarm the first-gesture sound listeners.
+    soundWanted=false;
+    window.removeEventListener('pointerdown',firstGestureSound);
+    window.removeEventListener('keydown',firstGestureSound);
+    window.removeEventListener('touchstart',firstGestureSound);
     document.body.style.overflow='';
   }
   function startPlay(){
@@ -505,6 +511,8 @@
   function setSoundBtn(on){ const b=document.getElementById('soundbtn'); if(b) b.textContent = on ? '🔇 Mute' : '🔊 Tap for sound'; }
   function enableSound(){
     if(!soundWanted) return;
+    const intro=document.getElementById('intro');
+    if(intro && intro.classList.contains('hide')) return;  // intro already closed — don't start audio
     try{ introVid.muted=false; introVid.volume=1.0; introVid.play().catch(()=>{}); soundOn=true; setSoundBtn(true); }catch(e){}
   }
   function toggleSound(){
