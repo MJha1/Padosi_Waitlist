@@ -669,10 +669,11 @@
     document.getElementById('formview').style.display='none';
     document.getElementById('doneview').style.display='block';
 
-    // Cook waitlist: take them straight to the WhatsApp group (new tab). The
-    // success screen stays as a fallback (and to send full details) if the
-    // browser blocks the pop-up.
-    if(mode==='cook'){ try{ window.open(GROUP_LINK_COOK,'_blank','noopener'); }catch(e){} }
+    // Both paths: open the prefilled details message first (cook's carries dishes
+    // + UPI; community's carries tower + role). The success screen then offers
+    // "Join your Padosi group" as the next step, so they land in the group AFTER
+    // sending their details. If the pop-up is blocked, the buttons are the fallback.
+    try{ window.open(waUrl,'_blank','noopener'); }catch(e){}
     return false;
   }
 </script>
