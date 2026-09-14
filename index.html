@@ -524,14 +524,17 @@
     <div class="sheet-head">
       <div>
         <h3 id="join-title">Join the waitlist</h3>
-        <p>Add your details and WhatsApp opens with a message to Padosi — send it and we'll add you to the group.</p>
+        <p>Add your details, then pick one — WhatsApp opens with a message to Padosi and we'll add you to the group.</p>
       </div>
       <button class="x" onclick="closeJoin()" aria-label="Close">×</button>
     </div>
-    <form id="joinform" onsubmit="return submitJoin(event)">
+    <form id="joinform" onsubmit="return false">
       <div><label>Your name <span class="req">*</span></label><input required name="name" autocomplete="name"></div>
       <div><label>WhatsApp number <span class="req">*</span></label><input required name="phone" type="tel" inputmode="tel" placeholder="+91 " autocomplete="tel"></div>
-      <button class="submit" type="submit">Continue on WhatsApp →</button>
+      <div class="two" style="margin-top:4px">
+        <button class="submit" type="button" onclick="joinAs('cook')">👩‍🍳 I'm a cook</button>
+        <button class="submit" type="button" style="background:var(--green)" onclick="joinAs('community')">🏢 For my community</button>
+      </div>
       <p class="hint">We add genuine members from the waitlist, so the group stays real neighbours only.</p>
     </form>
   </div>
@@ -610,15 +613,17 @@
   function openJoin(){ document.getElementById('joinoverlay').classList.add('open'); document.body.style.overflow='hidden'; }
   function closeJoin(){ document.getElementById('joinoverlay').classList.remove('open'); document.body.style.overflow=''; try{document.getElementById('joinform').reset();}catch(e){} }
   function postLead(data){ try{ return fetch('/api/join',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}); }catch(e){ return Promise.resolve(); } }
-  function submitJoin(e){
-    e.preventDefault();
-    const f = e.target;
+  function joinAs(side){
+    const f = document.getElementById('joinform');
+    if(!f.reportValidity()) return;            // native required-field validation
     const name = f.name.value.trim(), phone = f.phone.value.trim();
-    postLead({ side:'waitlist', name, phone }); // fire-and-forget capture (server-side)
-    const msg = `Hi Padosi! This is ${name} and ${phone}. I want to join the whatsapp group as a cook or I want to add it to the community`;
+    postLead({ side, name, phone });           // fire-and-forget capture (server-side)
+    const intent = side==='cook'
+      ? 'I want to join the WhatsApp group as a cook'
+      : 'I want to add Padosi to my community';
+    const msg = `Hi Padosi! This is ${name} and ${phone}. ${intent}.`;
     window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank','noopener'); // synchronous → not pop-up-blocked
     closeJoin();
-    return false;
   }
   document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeJoin(); });
 
