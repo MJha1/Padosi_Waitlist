@@ -240,7 +240,7 @@
   .intro{position:fixed;inset:0;background:radial-gradient(60% 60% at 50% 40%,rgba(45,32,20,.9),rgba(18,14,10,.96));z-index:100;
     display:flex;align-items:center;justify-content:center;flex-direction:column;padding:24px}
   .intro.hide{display:none}
-  .intro video{width:auto;height:auto;max-width:min(900px,92vw);max-height:78vh;object-fit:contain;border-radius:16px;
+  .intro video{height:min(78vh,660px);width:auto;aspect-ratio:1080/1920;max-width:94vw;object-fit:cover;border-radius:20px;
     box-shadow:0 24px 60px rgba(0,0,0,.5);background:#000}
   .intro-bar{display:flex;gap:10px;margin-top:18px}
   .intro-btn{border:0;cursor:pointer;font-family:inherit;font-size:15px;font-weight:700;padding:11px 20px;border-radius:999px}
@@ -296,7 +296,7 @@
 
 <!-- intro video overlay -->
 <div class="intro" id="intro">
-  <video id="introvid" playsinline muted autoplay preload="auto">
+  <video id="introvid" playsinline muted autoplay preload="auto" poster="poster.jpg">
   <source src="test.mp4" type="video/mp4">
   </video>
   <div class="intro-bar">
@@ -502,8 +502,8 @@
 <script>
   // ==== intro video ====
   const introVid = document.getElementById('introvid');
-  introVid.defaultPlaybackRate = 1.3;   // persists across (re)loads
-  introVid.playbackRate = 1.3;          // play the intro a touch faster
+  introVid.defaultPlaybackRate = 1.5;   // persists across (re)loads
+  introVid.playbackRate = 1.5;          // play the intro a touch faster
   function closeIntro(){
     const intro = document.getElementById('intro');
     intro.classList.add('hide');
@@ -517,7 +517,7 @@
     document.body.style.overflow='';
   }
   function startPlay(){
-    introVid.playbackRate = 1.3;
+    introVid.playbackRate = 1.5;
     introVid.play().then(()=>{
       document.getElementById('playbtn').style.display='none';
     }).catch(()=>{});
@@ -550,7 +550,7 @@
   window.addEventListener('touchstart',firstGestureSound);
   // try to autoplay; if the browser blocks it, show a Play button
   function tryAutoplay(){
-    introVid.playbackRate = 1.3;
+    introVid.playbackRate = 1.5;
     const p = introVid.play();
     if(p && p.catch){
       p.catch(()=>{ document.getElementById('playbtn').style.display=''; });
