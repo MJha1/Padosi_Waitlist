@@ -543,8 +543,8 @@
 <script>
   // ==== intro video ====
   const introVid = document.getElementById('introvid');
-  introVid.defaultPlaybackRate = 1.0;   // persists across (re)loads
-  introVid.playbackRate = 1.0;          // play the intro a touch faster
+  introVid.defaultPlaybackRate = 1.5;   // persists across (re)loads
+  introVid.playbackRate = 1.5;          // play the intro a touch faster
   function closeIntro(){
     const intro = document.getElementById('intro');
     intro.classList.add('hide');
@@ -558,7 +558,7 @@
     document.body.style.overflow='';
   }
   function startPlay(){
-    introVid.playbackRate = 1.0;
+    introVid.playbackRate = 1.5;
     introVid.play().then(()=>{
       document.getElementById('playbtn').style.display='none';
     }).catch(()=>{});
@@ -591,7 +591,7 @@
   window.addEventListener('touchstart',firstGestureSound);
   // try to autoplay; if the browser blocks it, show a Play button
   function tryAutoplay(){
-    introVid.playbackRate = 1.0;
+    introVid.playbackRate = 1.5;
     const p = introVid.play();
     if(p && p.catch){
       p.catch(()=>{ document.getElementById('playbtn').style.display=''; });
@@ -766,9 +766,10 @@
     }
     // play the cinematic film only while it's on screen
     const film=document.querySelector('.film');
+    if(film){ film.defaultPlaybackRate=1.5; film.playbackRate=1.5; }
     if(film && 'IntersectionObserver' in window){
       const fio=new IntersectionObserver((ents)=>{
-        ents.forEach(en=>{ if(en.isIntersecting){ film.play().catch(()=>{}); } else { film.pause(); } });
+        ents.forEach(en=>{ if(en.isIntersecting){ film.playbackRate=1.5; film.play().catch(()=>{}); } else { film.pause(); } });
       },{threshold:.25});
       fio.observe(film);
     }
