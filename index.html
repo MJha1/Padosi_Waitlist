@@ -321,7 +321,7 @@
     <div class="brandtext"><b>Padosi</b><span>Home-cook ordering for your society</span></div>
     <div class="navspace"></div>
     <a class="navlink hidemob" href="#how">How it works</a>
-    <a class="navcta" href="https://wa.me/15556695931?text=Hi%20Padosi!%20I%20want%20to%20join%20the%20whatsapp%20group%20as%20a%20cook%20or%20I%20want%20to%20add%20it%20to%20the%20community" target="_blank" rel="noopener">Join the waitlist</a>
+    <a class="navcta" href="#" onclick="openJoin();return false">Join the waitlist</a>
   </div>
 </nav>
 
@@ -518,6 +518,25 @@
   </div>
 </div>
 
+<!-- Join-the-waitlist modal (name + WhatsApp number, then group) -->
+<div class="overlay" id="joinoverlay" onclick="if(event.target===this)closeJoin()">
+  <div class="sheet" style="max-width:440px" role="dialog" aria-modal="true" aria-labelledby="join-title">
+    <div class="sheet-head">
+      <div>
+        <h3 id="join-title">Join the waitlist</h3>
+        <p>Two details, then we'll take you to the Padosi WhatsApp group.</p>
+      </div>
+      <button class="x" onclick="closeJoin()" aria-label="Close">×</button>
+    </div>
+    <form id="joinform" onsubmit="return submitJoin(event)">
+      <div><label>Your name <span class="req">*</span></label><input required name="name" autocomplete="name"></div>
+      <div><label>WhatsApp number <span class="req">*</span></label><input required name="phone" type="tel" inputmode="tel" placeholder="+91 " autocomplete="tel"></div>
+      <button class="submit" type="submit">Join the WhatsApp group →</button>
+      <p class="hint">We add genuine members from the waitlist, so the group stays real neighbours only.</p>
+    </form>
+  </div>
+</div>
+
 <script>
   // ==== intro video ====
   const introVid = document.getElementById('introvid');
@@ -586,6 +605,20 @@
   tryAutoplay();
   // lock scroll while intro is up
   document.body.style.overflow='hidden';
+
+  // ==== Join-the-waitlist: capture name + WhatsApp number, then open the group ====
+  function openJoin(){ document.getElementById('joinoverlay').classList.add('open'); document.body.style.overflow='hidden'; }
+  function closeJoin(){ document.getElementById('joinoverlay').classList.remove('open'); document.body.style.overflow=''; try{document.getElementById('joinform').reset();}catch(e){} }
+  function postLead(data){ try{ return fetch('/api/join',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}); }catch(e){ return Promise.resolve(); } }
+  function submitJoin(e){
+    e.preventDefault();
+    const f = e.target;
+    postLead({ side:'waitlist', name:f.name.value.trim(), phone:f.phone.value.trim() }); // fire-and-forget capture
+    window.open(GROUP_LINK_COOK,'_blank','noopener'); // synchronous → not pop-up-blocked
+    closeJoin();
+    return false;
+  }
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeJoin(); });
 
   // ==== CONFIG: set your WhatsApp Business number (with country code, no +) ====
   const WA_NUMBER = "15556695931"; // +1 (555) 669-5931 — Padosi test business number
@@ -679,6 +712,7 @@
     }catch(err){ console.warn('storage failed', err); }
 
     console.log('Waitlist signup:', data);
+    postLead(data); // persist the full lead server-side
 
     // Build a WhatsApp deep link prefilled with the FULL lead. This message,
     // sent to the business number, IS the captured lead — the sender's WhatsApp
