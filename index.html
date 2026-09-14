@@ -668,6 +668,11 @@
 
     document.getElementById('formview').style.display='none';
     document.getElementById('doneview').style.display='block';
+
+    // Cook waitlist: take them straight to the WhatsApp group (new tab). The
+    // success screen stays as a fallback (and to send full details) if the
+    // browser blocks the pop-up.
+    if(mode==='cook'){ try{ window.open(GROUP_LINK_COOK,'_blank','noopener'); }catch(e){} }
     return false;
   }
 </script>
