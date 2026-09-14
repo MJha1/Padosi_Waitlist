@@ -524,14 +524,14 @@
     <div class="sheet-head">
       <div>
         <h3 id="join-title">Join the waitlist</h3>
-        <p>Two details, then we'll take you to the Padosi WhatsApp group.</p>
+        <p>Add your details and WhatsApp opens with a message to Padosi — send it and we'll add you to the group.</p>
       </div>
       <button class="x" onclick="closeJoin()" aria-label="Close">×</button>
     </div>
     <form id="joinform" onsubmit="return submitJoin(event)">
       <div><label>Your name <span class="req">*</span></label><input required name="name" autocomplete="name"></div>
       <div><label>WhatsApp number <span class="req">*</span></label><input required name="phone" type="tel" inputmode="tel" placeholder="+91 " autocomplete="tel"></div>
-      <button class="submit" type="submit">Join the WhatsApp group →</button>
+      <button class="submit" type="submit">Continue on WhatsApp →</button>
       <p class="hint">We add genuine members from the waitlist, so the group stays real neighbours only.</p>
     </form>
   </div>
@@ -613,8 +613,10 @@
   function submitJoin(e){
     e.preventDefault();
     const f = e.target;
-    postLead({ side:'waitlist', name:f.name.value.trim(), phone:f.phone.value.trim() }); // fire-and-forget capture
-    window.open(GROUP_LINK_COOK,'_blank','noopener'); // synchronous → not pop-up-blocked
+    const name = f.name.value.trim(), phone = f.phone.value.trim();
+    postLead({ side:'waitlist', name, phone }); // fire-and-forget capture (server-side)
+    const msg = `Hi Padosi! This is ${name} and ${phone}. I want to join the whatsapp group as a cook or I want to add it to the community`;
+    window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank','noopener'); // synchronous → not pop-up-blocked
     closeJoin();
     return false;
   }

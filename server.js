@@ -39,9 +39,15 @@ app.get('/api/leads', (req, res) => {
     rows = fs.readFileSync(LEADS_FILE, 'utf8').trim().split('\n').filter(Boolean)
       .map(l => { try { return JSON.parse(l); } catch (_) { return null; } }).filter(Boolean);
   } catch (e) {}
-  if (req.query.format === 'json') return res.json(rows);
   const cols = [];
   rows.forEach(r => Object.keys(r).forEach(k => { if (!cols.includes(k)) cols.push(k); }));
+  if (req.query.format === 'json') return res.json(rows);
+  if (req.query.format === 'csv') {
+    const q = v => { v = String(v == null ? '' : v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+    const csv = [cols.join(',')].concat(rows.map(r => cols.map(c => q(r[c])).join(','))).join('\n');
+    res.setHeader('Content-Disposition', 'attachment; filename="padosi-leads.csv"');
+    return res.type('text/csv').send('﻿' + csv); // BOM so Excel reads UTF-8
+  }
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const html = `<!doctype html><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1">
 <title>Padosi leads (${rows.length})</title>
@@ -50,6 +56,7 @@ h2{font-family:Georgia,serif}table{border-collapse:collapse;width:100%;backgroun
 th,td{border:1px solid #e2dccf;padding:6px 9px;text-align:left;vertical-align:top}
 th{background:#efe4d3;position:sticky;top:0}tr:nth-child(even){background:#faf7f1}</style>
 <h2>Padosi waitlist — ${rows.length} lead${rows.length === 1 ? '' : 's'}</h2>
+<p><a href="/api/leads?key=${esc(req.query.key)}&amp;format=csv" style="display:inline-block;background:#b5641f;color:#fff;text-decoration:none;padding:9px 16px;border-radius:9px;font-weight:600">⬇ Download CSV</a></p>
 <div style="overflow:auto"><table><tr>${cols.map(c => `<th>${esc(c)}</th>`).join('')}</tr>
 ${rows.slice().reverse().map(r => `<tr>${cols.map(c => `<td>${esc(r[c])}</td>`).join('')}</tr>`).join('')}</table></div>`;
   res.type('html').send(html);
