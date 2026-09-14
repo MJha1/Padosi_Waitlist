@@ -222,7 +222,10 @@
     cursor:pointer;font-family:inherit;margin-top:4px}
   .submit:hover{background:var(--copper-deep)}
   .hint{font-size:13px;color:var(--ink-soft);margin-top:-6px}
-  .cookonly{display:none}
+  .cookonly,.commonly{display:none}
+  .show-cook .cookonly{display:block}
+  .show-cook .cookonly.two{display:grid}
+  .show-community .commonly{display:block}
   .done{display:none;text-align:center;padding:26px 8px}
   .done .k{font-size:44px;margin-bottom:10px}
   .done h3{font-family:var(--serif);font-weight:600;font-size:26px;margin:0 0 8px}
@@ -568,8 +571,9 @@
     const title = document.getElementById('sheet-title');
     const sub = document.getElementById('sheet-sub');
     const submit = document.getElementById('submitbtn');
-    document.querySelectorAll('.cookonly').forEach(e=>e.style.display = which==='cook' ? '' : 'none');
-    document.querySelectorAll('.commonly').forEach(e=>e.style.display = which==='community' ? '' : 'none');
+    const wf = document.getElementById('waitform');
+    wf.classList.toggle('show-cook', which==='cook');
+    wf.classList.toggle('show-community', which==='community');
     // toggle required on cook-only UPI
     const upi = document.querySelector('[name=upi]');
     upi.required = (which==='cook');
