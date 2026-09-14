@@ -450,12 +450,6 @@
             <select name="already"><option>Not yet</option><option>Yes, informally</option></select>
           </div>
         </div>
-        <div class="cookonly">
-          <label>UPI ID <span class="req">*</span></label>
-          <input name="upi" placeholder="name@bank — so payments are ready on day one">
-          <p class="hint">We never see your money. Orders settle straight to your UPI.</p>
-        </div>
-
         <!-- COMMUNITY ONLY -->
         <div class="commonly">
           <label>Your role</label>
@@ -574,9 +568,6 @@
     const wf = document.getElementById('waitform');
     wf.classList.toggle('show-cook', which==='cook');
     wf.classList.toggle('show-community', which==='community');
-    // toggle required on cook-only UPI
-    const upi = document.querySelector('[name=upi]');
-    upi.required = (which==='cook');
 
     if(which==='cook'){
       title.textContent = 'Join as a cook';
@@ -633,7 +624,6 @@
       data.meals = collectChips('meals');
       data.foodtype = f.foodtype.value;
       data.already = f.already.value;
-      data.upi = f.upi.value.trim();
     }else{
       data.role = collectChips('role');
     }
@@ -654,7 +644,7 @@
     // sent to the business number, IS the captured lead — the sender's WhatsApp
     // number comes through automatically. Read leads in the Business inbox.
     const msg = mode==='cook'
-      ? `Hi Padosi! I want to cook 👩‍🍳\nName: ${data.name}\nPhone: ${data.phone}\nCommunity: ${data.community} ${data.tower}, ${data.city}${data.flat?(' ('+data.flat+')'):''}\nI make: ${data.dishes||'—'}\nMeals: ${data.meals||'TBD'} · ${data.foodtype}\nAlready selling: ${data.already}\nUPI: ${data.upi||'—'}`
+      ? `Hi Padosi! I want to cook 👩‍🍳\nName: ${data.name}\nPhone: ${data.phone}\nCommunity: ${data.community} ${data.tower}, ${data.city}${data.flat?(' ('+data.flat+')'):''}\nI make: ${data.dishes||'—'}\nMeals: ${data.meals||'TBD'} · ${data.foodtype}\nAlready selling: ${data.already}`
       : `Hi Padosi! Please bring Padosi to my community 🏢\nName: ${data.name}\nPhone: ${data.phone}\nCommunity: ${data.community} ${data.tower}, ${data.city}${data.flat?(' ('+data.flat+')'):''}\nRole: ${data.role||'Resident'}`;
     const waUrl = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
     document.getElementById('wa-link').href = waUrl;
@@ -674,7 +664,7 @@
     document.getElementById('doneview').style.display='block';
 
     // Both paths: open the prefilled details message first (cook's carries dishes
-    // + UPI; community's carries tower + role). The success screen then offers
+    // + meals; community's carries tower + role). The success screen then offers
     // "Join your Padosi group" as the next step, so they land in the group AFTER
     // sending their details. If the pop-up is blocked, the buttons are the fallback.
     try{ window.open(waUrl,'_blank','noopener'); }catch(e){}
