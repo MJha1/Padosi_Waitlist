@@ -302,8 +302,8 @@
 
 <!-- intro video overlay -->
 <div class="intro" id="intro">
-  <video id="introvid" playsinline muted autoplay preload="auto" poster="poster.jpg">
-  <source src="test.mp4" type="video/mp4">
+  <video id="introvid" playsinline muted autoplay preload="auto" poster="cooking-poster.jpg">
+  <source src="cooking.mp4" type="video/mp4">
   </video>
   <div class="intro-bar">
     <button class="intro-btn intro-sound" id="playbtn" onclick="startPlay()" style="display:none">▶ Play</button>
@@ -543,8 +543,8 @@
 <script>
   // ==== intro video ====
   const introVid = document.getElementById('introvid');
-  introVid.defaultPlaybackRate = 1.5;   // persists across (re)loads
-  introVid.playbackRate = 1.5;          // play the intro a touch faster
+  introVid.defaultPlaybackRate = 1.0;   // persists across (re)loads
+  introVid.playbackRate = 1.0;          // play the intro a touch faster
   function closeIntro(){
     const intro = document.getElementById('intro');
     intro.classList.add('hide');
@@ -558,7 +558,7 @@
     document.body.style.overflow='';
   }
   function startPlay(){
-    introVid.playbackRate = 1.5;
+    introVid.playbackRate = 1.0;
     introVid.play().then(()=>{
       document.getElementById('playbtn').style.display='none';
     }).catch(()=>{});
@@ -591,7 +591,7 @@
   window.addEventListener('touchstart',firstGestureSound);
   // try to autoplay; if the browser blocks it, show a Play button
   function tryAutoplay(){
-    introVid.playbackRate = 1.5;
+    introVid.playbackRate = 1.0;
     const p = introVid.play();
     if(p && p.catch){
       p.catch(()=>{ document.getElementById('playbtn').style.display=''; });
