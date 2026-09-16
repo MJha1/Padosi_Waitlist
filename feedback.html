@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Padosi — Your feedback</title>
+<meta name="robots" content="noindex">
+<meta property="og:title" content="Padosi — tell us what you think">
+<meta property="og:description" content="30 seconds. What did you love, what's confusing, what's missing?">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,600&family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;box-sizing:border-box}
+  :root{--copper:#b5641f;--copper-ink:#8f4a15;--paper:#f6efe4;--card:#fffdf9;--ink:#2a231b;--muted:#6f6456;
+    --line:#e7dcc9;--green:#3f7d52}
+  html,body{min-height:100%}
+  body{font-family:'Hanken Grotesk',system-ui,sans-serif;color:var(--ink);
+    background:radial-gradient(680px 460px at 90% -10%,#f2dcc0 0%,transparent 60%),linear-gradient(180deg,#f6efe4,#efe4d4);
+    display:flex;justify-content:center;padding:26px 18px 40px;-webkit-font-smoothing:antialiased}
+  .wrap{width:100%;max-width:460px}
+  .brand{display:flex;align-items:center;gap:11px;margin-bottom:22px}
+  .logo{width:44px;height:44px;border-radius:12px;background:linear-gradient(150deg,#b5641f,#c9701c);
+    display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 8px 18px rgba(181,100,31,.28)}
+  .brand b{font-family:'Fraunces',serif;font-weight:600;font-size:23px;line-height:1;display:block}
+  .brand span{font-size:12.5px;color:var(--muted);font-weight:500}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px 22px;
+    box-shadow:0 2px 4px rgba(42,35,27,.05),0 20px 50px rgba(42,35,27,.09)}
+  h1{font-family:'Fraunces',serif;font-weight:600;font-size:28px;line-height:1.1;letter-spacing:-.01em;margin:0 0 8px;text-wrap:balance}
+  h1 em{font-style:italic;color:var(--copper)}
+  .lede{font-size:15px;color:var(--muted);line-height:1.5;margin:0 0 22px}
+  .label{font-size:13px;font-weight:700;color:var(--ink);margin:0 0 10px}
+  .faces{display:flex;gap:8px;margin-bottom:22px}
+  .face{flex:1;aspect-ratio:1/1;border:1.5px solid var(--line);background:#fff;border-radius:14px;
+    font-size:26px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+    transition:transform .12s,border-color .12s,background .12s;-webkit-tap-highlight-color:transparent}
+  .face small{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
+  .face:hover{transform:translateY(-2px)}
+  .face[aria-pressed="true"]{border-color:var(--copper);background:#fbf1e4;transform:translateY(-2px);
+    box-shadow:0 6px 16px rgba(181,100,31,.18)}
+  textarea,input{width:100%;font-family:inherit;font-size:15px;color:var(--ink);background:#fff;
+    border:1.5px solid var(--line);border-radius:13px;padding:13px 14px;outline:none;transition:border-color .12s}
+  textarea:focus,input:focus{border-color:var(--copper)}
+  textarea{min-height:104px;resize:vertical;line-height:1.5}
+  .row{margin-bottom:16px}
+  .hint{font-size:12px;color:var(--muted);margin:7px 2px 0}
+  button.submit{width:100%;margin-top:6px;background:var(--copper);color:#fff;border:0;border-radius:13px;
+    padding:16px;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;
+    box-shadow:0 10px 24px rgba(181,100,31,.28);transition:transform .1s,background .12s;-webkit-tap-highlight-color:transparent}
+  button.submit:hover{background:var(--copper-ink)}
+  button.submit:active{transform:scale(.99)}
+  button.submit:disabled{opacity:.55;cursor:default;box-shadow:none}
+  .thanks{display:none;text-align:center;padding:14px 6px}
+  .thanks .big{font-size:46px;margin-bottom:6px}
+  .thanks h2{font-family:'Fraunces',serif;font-weight:600;font-size:26px;margin:0 0 8px}
+  .thanks p{color:var(--muted);font-size:15px;line-height:1.5;margin:0 0 20px}
+  .thanks a{display:inline-block;background:#fff;color:var(--copper-ink);border:1.5px solid var(--line);
+    text-decoration:none;font-weight:700;font-size:15px;border-radius:12px;padding:13px 22px}
+  .foot{text-align:center;font-size:12px;color:var(--muted);margin-top:18px}
+  .foot a{color:var(--copper-ink)}
+</style></head>
+<body>
+  <div class="wrap">
+    <div class="brand">
+      <div class="logo">🍲</div>
+      <div><b>Padosi</b><span>Home-cook ordering for your society</span></div>
+    </div>
+
+    <div class="card" id="card">
+      <h1>How was <em>Padosi</em>?</h1>
+      <p class="lede">You tried it — now tell us the truth. 30 seconds, and it genuinely shapes what we build next. 🙏</p>
+
+      <p class="label">First, a quick tap:</p>
+      <div class="faces" id="faces" role="group" aria-label="Overall rating">
+        <button type="button" class="face" data-v="1" aria-pressed="false">😕<small>Meh</small></button>
+        <button type="button" class="face" data-v="2" aria-pressed="false">🙂<small>Okay</small></button>
+        <button type="button" class="face" data-v="3" aria-pressed="false">😀<small>Good</small></button>
+        <button type="button" class="face" data-v="4" aria-pressed="false">😍<small>Loved it</small></button>
+      </div>
+
+      <div class="row">
+        <p class="label">What worked, what didn't, what's missing?</p>
+        <textarea id="comment" placeholder="Type anything — even one line helps. Be brutally honest."></textarea>
+      </div>
+
+      <div class="row">
+        <input id="name" type="text" placeholder="Your name (optional)" autocomplete="name">
+        <p class="hint">Optional — leave it if you'd like us to reply.</p>
+      </div>
+
+      <button class="submit" id="send">Send feedback →</button>
+    </div>
+
+    <div class="card thanks" id="thanks">
+      <div class="big">🙏</div>
+      <h2>Thank you!</h2>
+      <p>Your feedback just landed with the team. This is exactly how Padosi gets better.</p>
+      <a href="https://padosi-self.vercel.app/hero/index.html">Back to the app →</a>
+    </div>
+
+    <p class="foot">Made with care · <a href="https://padosi-self.vercel.app/hero/index.html">padosi-self.vercel.app</a></p>
+  </div>
+
+<script>
+  let rating = 0;
+  const faces = document.getElementById('faces');
+  faces.addEventListener('click', function(e){
+    const b = e.target.closest('.face'); if(!b) return;
+    rating = parseInt(b.dataset.v, 10);
+    [...faces.querySelectorAll('.face')].forEach(f => f.setAttribute('aria-pressed', f === b ? 'true' : 'false'));
+  });
+
+  const send = document.getElementById('send');
+  send.addEventListener('click', async function(){
+    const comment = document.getElementById('comment').value.trim();
+    const name = document.getElementById('name').value.trim();
+    if(!rating && !comment){
+      document.getElementById('comment').focus();
+      send.textContent = 'Add a tap or a line first ↑';
+      setTimeout(()=>{ send.textContent = 'Send feedback →'; }, 1800);
+      return;
+    }
+    send.disabled = true; send.textContent = 'Sending…';
+    try{
+      await fetch('/api/feedback', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ rating: rating || '', comment, name, ua: navigator.userAgent.slice(0,140) })
+      });
+    }catch(e){}
+    document.getElementById('card').style.display = 'none';
+    document.getElementById('thanks').style.display = 'block';
+  });
+</script>
+</body></html>
